@@ -15,10 +15,6 @@ let criarImagem = async function imageOverlay(imageOverlay) {
     
         console.log("Image is processed successfully");    
     }
-    
-    // Calling this function using async
-    // imageOverlay('C:/Users/galima/Desktop/Pessoal/casadocodigo/images/pp.jpg');
-    // console.log("Image is processed successfully");
 
 
 module.exports = criarImagem; 
