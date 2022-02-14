@@ -1,34 +1,44 @@
 const routes = require("express").Router();
 const multer = require("multer");
+const fs = require("fs");
+
 const multerConfig = require("./config/multer");
-
-const Post = require("./models/Post");
-
-routes.get("/posts", async (req, res) => {
-  const posts = await Post.find();
-
-  return res.json(posts);
-});
+const criarImagem = require("./config/jimpService");
 
 routes.post("/posts", multer(multerConfig).single("file"), async (req, res) => {
-  const { originalname: name, size, key, location: url = "" } = req.file;
+  // await removeFile("C:/Users/galima/Desktop/Pessoal/youtube-upload-nodejs-reactjs-backend/src/images/newImage.png");
 
-  const post = await Post.create({
-    name,
-    size,
-    key,
-    url
-  });
+  console.log("IMAGEM TEMP SALVA");
+  
+  criarImagem(req.file.path);
 
-  return res.json(post);
+  await removeFile(req.file.path);
+
+  console.log("IMAGEM CRIADA");
+
+  // return res.json({oi: "oi"});
+
+  let imagemcriada = imgToBase64();
+
+  return res.json(imagemcriada);
 });
 
-routes.delete("/posts/:id", async (req, res) => {
-  const post = await Post.findById(req.params.id);
+function imgToBase64(){
+  console.log("CONVERTENDO IMAGEM");
+  return fs.readFileSync('C:/Users/galima/Desktop/Pessoal/youtube-upload-nodejs-reactjs-backend/src/images/newImage.png', {encoding: 'base64'});
+}
 
-  await post.remove();
+async function removeFile(path) {
+  try{
+    console.log("REMOVER ", path);
 
-  return res.send();
-});
+    await fs.unlinkSync(path);
+
+    console.log("IMAGEM REMOVIDA");
+  }
+  catch(e){
+    console.log(e);
+  }
+}
 
 module.exports = routes;
